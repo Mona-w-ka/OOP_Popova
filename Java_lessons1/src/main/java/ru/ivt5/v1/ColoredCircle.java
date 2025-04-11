@@ -1,106 +1,67 @@
 package ru.ivt5.v1;
 
-import ru.ivt5.v3.colors.Color;
-import ru.ivt5.v3.colors.ColorException;
+import processing.core.PApplet;
+import ru.ivt5.v3.Figure;
 
-public class ColoredCircle {
-    private Point center;
-    private int radius;
-    private Color color;
+public class ColoredCircle extends Figure { //extends Circle implements Colored {
+    private int color;
+    public int life;
+    protected float x, y, Diameter, xSpeed, ySpeed;
+    protected PApplet sketch;
 
-    public ColoredCircle(Point center, int radius, Color color) {
-        this.center = center;
-        this.radius = radius;
-        this.color = color;
-    }
-
-    public ColoredCircle(int xCenter, int yCenter, int radius, Color color) {
-        this.center = new Point(xCenter, yCenter);
-        this.radius = radius;
-        this.color = color;
-    }
-
-    public ColoredCircle(int radius, Color color) {
-        this.center = new Point(0, 0);
-        this.radius = radius;
-        this.color = color;
-    }
-
-    public ColoredCircle(Color color) {
-        this.center = new Point(0, 0);
-        this.radius = 1;
-        this.color = color;
+    public ColoredCircle(PApplet sketch, float x, float y,float dx,float dy) {
+        this();
+        this.sketch = sketch;
+        this.x = x;
+        this.y = y;
+        this.Diameter = sketch.random(10, 100);
+        this.xSpeed = sketch.random(-5, 5)+dx;
+        this.ySpeed = sketch.random(-5, 5)+dy;
+        this.color = sketch.color(sketch.random(255), sketch.random(255), sketch.random(255));
+        life = 500;
     }
 
     public ColoredCircle() {
-        this.center = new Point(0, 0);
-        this.radius = 1;
-        this.color = Color.RED;
+        super((int) 0.0f, (int) 0.0f);
     }
 
-    public Point getCenter() {
-        return center;
+    @Override
+    public void moveTo(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 
-    public int getRadius() {
-        return radius;
+    public void moveRel(float dx, float dy) {
+        x+= dx;
+        y+= dy;
     }
 
-    public void setCenter(Point center) {
-        this.center = center;
+    public void step() {
+        moveRel(xSpeed, ySpeed);
+        if (x < Diameter/2 ) {
+            xSpeed = Math.abs(xSpeed);
+            x = Diameter/2;}
+        if(x > sketch.width - Diameter/2) {
+            xSpeed = -Math.abs(xSpeed);
+            x = sketch.width-Diameter/2;}
+
+        if (y < Diameter/2 ) ySpeed = Math.abs(ySpeed);
+        if (y > sketch.height - Diameter/2) ySpeed = -Math.abs(ySpeed);
+        life -=1;
     }
 
-    public void setRadius(int radius) {
-        this.radius = radius;
-    }
-
-    public Color getColor() {
-        return color;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
-    }
-
-    public void moveRel(int dx, int dy) {
-        center.moveRel(dx, dy);
-    }
-
-    public void resize(double ratio) {
-        radius = (int) (radius * ratio);
-    }
-
-    public double getArea() {
-        return Math.PI * radius * radius;
-    }
-
-    public double getPerimeter() {
-        return 2 * Math.PI * radius;
+    public void render() {
+        sketch.fill(color);
+        sketch.ellipse(x, y, Diameter, Diameter);
     }
 
     public boolean isInside(int x, int y) {
-        int dx = x - center.getX();
-        int dy = y - center.getY();
-        return dx * dx + dy * dy <= radius * radius;
+        return false;
     }
 
-    public boolean isInside(Point point) {
-        return isInside(point.getX(), point.getY());
+    @Override
+    public double getArea() {
+        return 0;
     }
 
-    public ColoredCircle(Point center, int radius, String colorString) throws ColorException, ColorException {
-        this(center, radius, Color.colorFromString(colorString));
-    }
-
-    public ColoredCircle(int xCenter, int yCenter, int radius, String colorString) throws ColorException {
-        this(new Point(xCenter, yCenter), radius, colorString);
-    }
-
-    public ColoredCircle(int radius, String colorString) throws ColorException {
-        this(new Point(0, 0), radius, colorString);
-    }
-
-    public ColoredCircle(String colorString) throws ColorException {
-        this(new Point(0, 0), 1, colorString);
-    }
 }
