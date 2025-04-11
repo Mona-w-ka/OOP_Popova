@@ -3,6 +3,7 @@ import ru.ivt5.iface.HasArea;
 import ru.ivt5.iface.Movable;
 
 public abstract class Figure implements Movable, HasArea {
+    public int life;
     protected int x;
     protected int y;
 
@@ -26,5 +27,11 @@ public abstract class Figure implements Movable, HasArea {
         this.x += dx;
         this.y += dy;
     }
+
+    public abstract boolean isInside(int x, int y);
+
+    public abstract void step();
+
+    public abstract void render();
 }
 
